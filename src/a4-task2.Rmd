@@ -37,16 +37,24 @@ juv_hares <- bonanza_hares %>%
 
 juv_hares_counts <- juv_hares %>% 
   count(year) # Create a table containing the number of juvenile hares per year
-  
-ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
-  geom_col() +
-  labs(x = "Year" , 
-       y = "Number of juvenile hares", 
-       title = "Total Juvenile Hares by Year") +
-  scale_x_continuous(breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012))
+
+juv_stats <- juv_hares_counts %>% 
+  summarize(mean_counts = mean(n), 
+            median_counts = median(n), 
+            min_counts = min(n), 
+            max_counts = max(n))
 
 ```
 
+```{r juv_trappings_graph, echo=FALSE}
+ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
+  geom_col(color = "darkslategrey", fill = "darkslategrey") +
+  labs(x = "Year" , 
+       y = "Total counts of juvenile trappings") +
+  scale_x_continuous(breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) +
+  theme_minimal()
+```
 
+**Figure 1.** Total number of juvenile snowshoe hare trappings by year (1999 to 2012) from the Bonanza Creek Experimental Forest in Alaska. Data: Kielland et al. (2017). 
 
 
