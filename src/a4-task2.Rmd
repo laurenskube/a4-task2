@@ -11,16 +11,16 @@ library(tidyverse)
 library(here)
 library(effsize)
 library(broom)
-library(ggbeeswarm)
 library(kableExtra)
+library(lubridate)
 ```
 
 ### 1. Overview
 
 Write an overview of the report here. 
 
-```{r, include=FALSE}
-bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv"))
+```{r, include=FALSE, message=FALSE}
+bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv")) # Read in the data using the here() function
 ```
 
 
@@ -29,7 +29,21 @@ bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv"))
 ### 3. Exploratory findings 
 
 #### A. Annual juvenile hare trap counts 
-```{r}
+```{r, include=FALSE}
+juv_hares <- bonanza_hares %>% 
+  filter(age == "j") %>% # Create a subset that only contains juveniles
+  mutate(date = mdy(date)) %>% # Change the date column to "date" class
+  mutate(year = year(date)) # add a new column for the year 
+
+juv_hares_counts <- juv_hares %>% 
+  count(year) # Create a table containing the number of juvenile hares per year
+  
+ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
+  geom_col() +
+  labs(x = "Year" , 
+       y = "Number of juvenile hares", 
+       title = "Total Juvenile Hares by Year") +
+  scale_x_continuous(breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012))
 
 ```
 
