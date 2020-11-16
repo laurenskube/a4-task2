@@ -1,0 +1,38 @@
+---
+title: "Juvenile snowshoe hares - exploratory report"
+author: "By: Lauren Skube"
+date: "11/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(effsize)
+library(broom)
+library(ggbeeswarm)
+library(kableExtra)
+```
+
+### 1. Overview
+
+Write an overview of the report here. 
+
+```{r, include=FALSE}
+bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv"))
+```
+
+
+### 2. Data and analyses 
+
+### 3. Exploratory findings 
+
+#### A. Annual juvenile hare trap counts 
+```{r}
+
+```
+
+
+
+
