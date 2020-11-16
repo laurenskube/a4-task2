@@ -28,7 +28,9 @@ bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv")) # Read in the data
 
 ### 3. Exploratory findings 
 
+
 #### A. Annual juvenile hare trap counts 
+
 ```{r, include=FALSE}
 juv_hares <- bonanza_hares %>% 
   filter(age == "j") %>% # Create a subset that only contains juveniles
@@ -55,6 +57,8 @@ ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
   theme_minimal()
 ```
 
-**Figure 1.** Total number of juvenile snowshoe hare trappings by year (1999 to 2012) from the Bonanza Creek Experimental Forest in Alaska. Data: Kielland et al. (2017). 
+**Figure 1.** Total number of juvenile snowshoe hare trappings by year (1999 to 2012) across all grid sites in Bonanza Creek Experimental Forest, Alaska. Data: Kielland et al. (2017). 
 
+Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. 
 
+#### B. Visualization of juvenile hare weights 
