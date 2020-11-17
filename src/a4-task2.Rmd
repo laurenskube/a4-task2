@@ -94,7 +94,28 @@ ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
   theme_light() +
   theme(legend.position = "none")
 
+```
+
+**Figure 2.** Insert figure caption here.
+
+Talk about main takeaways here. 
+
+**Table 1.** insert table caption here. 
+```{r, echo=FALSE, message=FALSE}
+# Create a table of summary statistics for juvenile hare weights
+
+juv_hares %>% 
+  drop_na(weight) %>% 
+  drop_na(sex_full) %>% 
+  group_by(sex_full) %>% 
+  summarise(
+    mean_weight = mean(weight) ,
+    sd_weight = sd(weight),
+    sample_size = n()
+    ) %>% 
+  kbl(col.names = c("Sex" , "Mean", "Standard deviation" , "Sample size")) %>% 
+  kable_styling()
+
 
 ```
 
-**Figure 2.** Insert figure caption here
