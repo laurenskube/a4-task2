@@ -42,15 +42,16 @@ juv_hares <- bonanza_hares %>%
     sex %in% c("f") ~ "Female" ,
     sex %in% c("m") ~ "Male"))
   
-juv_grid_full <- juv_hares %>% 
+juv_grid_full <- juv_hares %>% # Create a subset with the full name for grid sites
   mutate(grid_full = case_when(
       grid %in% c("bonrip") ~ "Bonanza Riparian" ,
       grid %in% c("bonmat") ~ "Bonanza Mature" ,
       grid %in% c("bonbs") ~ "Bonanaza ?"))
 
 juv_hares_counts <- juv_hares %>% 
-  count(year) # Create a table containing the number of juvenile hares per year
+  count(year) # Create a table containing the number of juvenile hare trappings per year
 
+# Summary statistics for juvenile trapping counts
 juv_stats <- juv_hares_counts %>% 
   summarize(mean_counts = mean(n), 
             median_counts = median(n), 
@@ -60,11 +61,13 @@ juv_stats <- juv_hares_counts %>%
 ```
 
 ```{r juv_trappings_graph, echo=FALSE}
+
+# Create a bar graph for juvenile trappings per year 
 ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
   geom_col(color = "darkslategrey", fill = "darkslategrey") +
   labs(x = "Year" , 
        y = "Total counts of juvenile trappings") +
-  scale_x_continuous(breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) +
+  scale_x_continuous(breaks = c(1998, 2000, 2002, 2004, 2006, 2008, 2010, 2012)) + # Customize x scale
   theme_minimal()
 ```
 
@@ -83,16 +86,18 @@ ggplot(juv_grid_full, aes(x = sex_full, y = weight))+
        y = "Weight (g)") +
   theme_light()
 
+# Create boxplot with male and female weights by grid site
 ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
-  geom_boxplot(size = 0.75, 
-               outlier.color = "black") +
-  facet_wrap(~grid_full) +
+  geom_boxplot(size = 0.75, # Increase thickness of lines
+               outlier.color = "black") + # Show outliers in black 
+  facet_wrap(~grid_full) + # Separate by grid site
   labs(x = "Sex", 
-       y = "Weight (g)") +
-  geom_jitter(alpha = 0.4,
-              width = 0.2) +
+       y = "Weight (g)") + 
+  #Overlay with a jitterplot to show individual observations
+  geom_jitter(alpha = 0.4, # Customize transparency of points
+              width = 0.2) + # Reduce jitter width
   theme_light() +
-  theme(legend.position = "none")
+  theme(legend.position = "none") # Remove the legend
 
 ```
 
@@ -102,17 +107,18 @@ Talk about main takeaways here.
 
 **Table 1.** insert table caption here. 
 ```{r, echo=FALSE, message=FALSE}
-# Create a table of summary statistics for juvenile hare weights
 
+# Create a table of summary statistics for juvenile hare weights
 juv_hares %>% 
   drop_na(weight) %>% 
-  drop_na(sex_full) %>% 
+  drop_na(sex_full) %>% # Remove NA values 
   group_by(sex_full) %>% 
   summarise(
     mean_weight = mean(weight) ,
     sd_weight = sd(weight),
     sample_size = n()
     ) %>% 
+  # format summary statistics in a nice table
   kbl(col.names = c("Sex" , "Mean", "Standard deviation" , "Sample size")) %>% 
   kable_styling()
 
