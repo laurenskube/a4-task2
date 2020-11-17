@@ -11,6 +11,7 @@ library(tidyverse)
 library(here)
 library(effsize)
 library(broom)
+library(beeswarm)
 library(kableExtra)
 library(lubridate)
 ```
@@ -21,6 +22,7 @@ Write an overview of the report here.
 
 ```{r, include=FALSE, message=FALSE}
 bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv")) # Read in the data using the here() function
+
 ```
 
 
@@ -35,7 +37,16 @@ bonanza_hares <- read.csv(here("data" , "bonanza_hares.csv")) # Read in the data
 juv_hares <- bonanza_hares %>% 
   filter(age == "j") %>% # Create a subset that only contains juveniles
   mutate(date = mdy(date)) %>% # Change the date column to "date" class
-  mutate(year = year(date)) # add a new column for the year 
+  mutate(year = year(date)) %>% # Add a new column for the year 
+  mutate(sex_full = case_when( # Add a new column with the full name of the sex 
+    sex %in% c("f") ~ "Female" ,
+    sex %in% c("m") ~ "Male"))
+  
+juv_grid_full <- juv_hares %>% 
+  mutate(grid_full = case_when(
+      grid %in% c("bonrip") ~ "Bonanza Riparian" ,
+      grid %in% c("bonmat") ~ "Bonanza Mature" ,
+      grid %in% c("bonbs") ~ "Bonanaza ?"))
 
 juv_hares_counts <- juv_hares %>% 
   count(year) # Create a table containing the number of juvenile hares per year
@@ -62,3 +73,28 @@ ggplot(data = juv_hares_counts, aes(x= year, y = n)) +
 Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. Talk about major takeaways from the figure here. 
 
 #### B. Visualization of juvenile hare weights 
+
+```{r, echo=FALSE, warning=FALSE}
+# Remove this?
+ggplot(juv_grid_full, aes(x = sex_full, y = weight))+
+  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) +
+  facet_wrap(~grid_full) +
+  labs(x = "Sex", 
+       y = "Weight (g)") +
+  theme_light()
+
+ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
+  geom_boxplot(size = 0.75, 
+               outlier.color = "black") +
+  facet_wrap(~grid_full) +
+  labs(x = "Sex", 
+       y = "Weight (g)") +
+  geom_jitter(alpha = 0.4,
+              width = 0.2) +
+  theme_light() +
+  theme(legend.position = "none")
+
+
+```
+
+**Figure 2.** Insert figure caption here
