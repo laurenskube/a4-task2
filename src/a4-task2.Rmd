@@ -46,7 +46,7 @@ juv_grid_full <- juv_hares %>% # Create a subset with the full name for grid sit
   mutate(grid_full = case_when(
       grid %in% c("bonrip") ~ "Bonanza Riparian" ,
       grid %in% c("bonmat") ~ "Bonanza Mature" ,
-      grid %in% c("bonbs") ~ "Bonanaza ?"))
+      grid %in% c("bonbs") ~ "Bonbs"))
 
 juv_hares_counts <- juv_hares %>% 
   count(year) # Create a table containing the number of juvenile hare trappings per year
@@ -78,13 +78,6 @@ Talk about major takeaways from the figure here. Talk about major takeaways from
 #### B. Visualization of juvenile hare weights 
 
 ```{r, echo=FALSE, warning=FALSE}
-# Remove this?
-ggplot(juv_grid_full, aes(x = sex_full, y = weight))+
-  geom_violin(draw_quantiles = c(0.25, 0.5, 0.75)) +
-  facet_wrap(~grid_full) +
-  labs(x = "Sex", 
-       y = "Weight (g)") +
-  theme_light()
 
 # Create boxplot with male and female weights by grid site
 ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
@@ -95,7 +88,7 @@ ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
        y = "Weight (g)") + 
   #Overlay with a jitterplot to show individual observations
   geom_jitter(alpha = 0.4, # Customize transparency of points
-              width = 0.2) + # Reduce jitter width
+              width = 0.15) + # Reduce jitter width
   theme_light() +
   theme(legend.position = "none") # Remove the legend
 
@@ -104,6 +97,8 @@ ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
 **Figure 2.** Insert figure caption here.
 
 Talk about main takeaways here. 
+
+#### **C. Juvenile weight comparison (male and female snowshoe hares)**
 
 **Table 1.** insert table caption here. 
 ```{r, echo=FALSE, message=FALSE}
@@ -133,6 +128,9 @@ juv_hares_clean <- juv_hares %>%
 
 # Actual difference in means between males and females: 90.568 g 
 945.8589-855.3909
+
+# Percent difference: 
+90.468/((945.8589+855.3909)/2) * 100
 
 # Create a vector of weight observations for males
 m_weight <- juv_hares_clean %>% 
@@ -167,3 +165,46 @@ ggplot(data = juv_hares_clean, aes(x = weight)) +
 
 ```
 
+Insert statement about the means comparison here. Talk about actual difference, percent difference, significance in regards to t-test, and effect size in regards to Cohen's d.
+
+#### D. Relationship between juvenile hare weight and hind foot length 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Create a scatterplot for weight vs hind foot length
+ggplot(data = juv_hares_clean, aes(x = hindft, y=weight)) + 
+  geom_point(color = "darkslategrey") +
+  labs(x = "Hind foot length (mm)" , 
+       y = "weight (g)") +
+  theme_light()
+```
+
+**Figure 3.** Insert figure caption here. 
+
+
+#### C. Linear regression analysis 
+```{r, echo=FALSE, include=FALSE, message=FALSE}
+# Try out linear regression:
+
+# model it with the lm() function 
+juveniles_lm <- lm(weight ~ hindft, data = juv_hares_clean)
+
+summary(juveniles_lm)
+```
+Multiple r-squared value is 0.2988, meaning that 29.9% of variance in juvenile snowshoe weight is explained by hind foot length. 
+
+The slope is 9.5234. The y-intercept is -279.34. 
+
+Describe what these values mean 
+
+Simple linear regression was used to explore the relationship between juvenile snowshoe hare hind foot length (mm) and weight (g) across all grid sites, and including both male and female juveniles. A significant regression model was found (β = 9.52, F(1,247) = 105.2, p < 0.001) with an R2 of 0.299.
+
+```{r, include=FALSE, echo=FALSE}
+
+# Check residual assumptions 
+plot(juveniles_lm)
+
+# first plot shows a clear trend in variance - assumption of homoscedasticity is violated, residuals are not distributed evenly or randomly
+# second plot - shows residuals are not normally distributed about the model 
+# fourth plot - labeled observations are outliers that may have too much leverage in the model 
+```
+Talk about these concerns when expressing worries over assumption of linear regression. 
