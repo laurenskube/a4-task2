@@ -124,4 +124,46 @@ juv_hares %>%
 
 
 ```
+```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# Create a subset that does not include NA values 
+juv_hares_clean <- juv_hares %>% 
+  drop_na(weight)
+
+# T-Test code:
+
+# Actual difference in means between males and females: 90.568 g 
+945.8589-855.3909
+
+# Create a vector of weight observations for males
+m_weight <- juv_hares_clean %>% 
+  filter(sex == "m") %>% 
+  pull(weight) 
+
+# Create a vector of weight observations for females 
+f_weight <- juv_hares_clean %>% 
+  filter(sex == "f") %>% 
+  pull(weight) 
+
+# Run the t-test 
+weight_ttest <- t.test(m_weight, f_weight) 
+
+# Effect size (Cohen's d): 
+cohen.d(m_weight , f_weight)
+
+
+```
+```{r, echo=FALSE, include=FALSE}
+# Exploratory graphs to check assumptions of t-test
+
+# Create a quantile-quantile graph to compare sample to normality
+ggplot(data = juv_hares_clean, aes(sample = weight)) + 
+  geom_qq() +
+  facet_wrap(~sex)
+
+# Create a histogram to compare sample to normality 
+ggplot(data = juv_hares_clean, aes(x = weight)) + 
+  geom_histogram() + 
+  facet_wrap(~sex)
+
+```
 
