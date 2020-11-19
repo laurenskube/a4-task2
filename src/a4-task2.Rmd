@@ -45,7 +45,7 @@ juv_grid_full <- juv_hares %>% # Create a subset with the full name for grid sit
   mutate(grid_full = case_when(
       grid %in% c("bonrip") ~ "Bonanza Riparian" ,
       grid %in% c("bonmat") ~ "Bonanza Mature" ,
-      grid %in% c("bonbs") ~ "Bonbs"))
+      grid %in% c("bonbs") ~ "Bonzana Black Spruce"))
 
 juv_hares_counts <- juv_hares %>% 
   count(year) # Create a table containing the number of juvenile hare trappings per year
@@ -109,10 +109,9 @@ ggplot(juv_grid_full, aes(x= sex_full, y = weight, fill = sex_full)) +
   theme(legend.position = "none") # Remove the legend
 
 ```
-**Figure 2.** Weight observations (g) of juvenile male and female snowshoe hares for each trapping grid site (Bonanza Mature forest, Bonanza Riparian forest, and Bonbs). Pink (female) and teal (male) points indicate individual observations for weight (grams) of juvenile snowshoe hares. Box endpoints indicate the 25th and 75th percentile values; the black line indicates the median for each sex at the different grid sites. Outliers are indicated by black points. Data: Kielland et al. (2017).
+**Figure 2.** Weight observations (g) of juvenile male and female snowshoe hares for each trapping grid site (Bonanza Mature forest, Bonanza Riparian forest, and Bonanza Black Spruce forest). Pink (female) and teal (male) points indicate individual observations for weight (grams) of juvenile snowshoe hares. Box endpoints indicate the 25th and 75th percentile values; the black line indicates the median for each sex at the different grid sites. Outliers are indicated by black points. Data: Kielland et al. (2017).
 
-Juvenile snowshoe hare weights were compared by sex and grid site. There were notable outliers in the female sample from the Bonanza Riparian site and in the male sample from the Bonbs site. Median values were similar across the different grids for both male and female groups. 
-Each group had a relatively large spread, with many overlapping points between groups of both males and females and across grid sites. Some of the juvenile groups, including Bonanza Riparian females and Bonanza Mature males, appeared to have a bimodal distribution rather than relative distributions. 
+Juvenile snowshoe hare weights were compared by sex and grid site. There were notable outliers in the female sample from the Bonanza Riparian site and in the male sample from the Bonanza Black Spruce site. Median values were similar across the different grids for both male and female groups. Each group had a relatively large spread, with many overlapping points between groups of both males and females and across grid sites. Some of the juvenile groups, including Bonanza Riparian females and Bonanza Mature males, appeared to have a bimodal distribution rather than relative distributions. 
 
 #### **C. Juvenile weight comparison (male and female snowshoe hares)**
 
@@ -162,8 +161,16 @@ f_weight <- juv_hares_clean %>%
 # Run the t-test 
 weight_ttest <- t.test(m_weight, f_weight) 
 
+weight_ttest_tidy <- tidy(weight_ttest)
+
+# Get the means for both groups 
+male_mean <- mean(m_weight)
+female_mean <- mean(f_weight)
+male_sd <- sd(m_weight)
+female_sd <- sd(f_weight)
+
 # Effect size (Cohen's d): 
-cohen.d(m_weight , f_weight)
+weight_effsize <- cohen.d(m_weight , f_weight)
 
 
 
@@ -187,7 +194,7 @@ ggplot(data = juv_hares_clean, aes(x = weight)) +
 
 ```
 
-Distributions of weights for male and female juvenile snowshoe hares were relatively normal and symmetric. On average, male juvenile snowshoe hares weigh more than juvenile females. Juvenile males have a mean weight of 945.86 grams (sd = 333.22g), and females have a mean weight of 855.39 grams (sd = 292.25g). The absolute difference in means is 90.47 g (10.05% difference), and is significant (Welch's two-sample t-test: t(325.02) = 2.71, p = 0.007). While the difference in means is significant, the effect size is small (Cohen's *d* = 0.29). 
+Distributions of weights for male and female juvenile snowshoe hares were relatively normal and symmetric. On average, male juvenile snowshoe hares weighed more than juvenile females (`r round(male_mean,2)` $\pm$ `r round(male_sd, 2)` and `r round(female_mean,2)` $\pm$ `r round(female_sd, 2)` g, respectively; mean $\pm$ 1 standard deviation). The absolute difference in means is `r round(male_mean, 2) - round(female_mean, 2)` g (a `r round((male_mean - female_mean)/((male_mean + female_mean)/2)*100, 2)`% difference), and is significant (Welch's two-sample t-test: t(`r round(weight_ttest_tidy$parameter,2)`) = `r round(weight_ttest_tidy$statistic,2)`, p = `r round(weight_ttest_tidy$p.value,2)`. While the difference in means is significant, the effect size is small (Cohen's *d* = (`r round(weight_effsize$estimate,2)`). 
 
 
 #### D. Relationship between juvenile hare weight and hind foot length 
@@ -233,4 +240,6 @@ plot(juveniles_lm)
 # fourth plot - labeled observations are outliers that may have too much leverage in the model 
 ```
 
-Simple linear regression was used to explore the relationship between juvenile snowshoe hare hind foot length (mm) and weight (g) across all grid sites, including both male and female juveniles. A significant regression model was found (β = 9.52, F(1,247) = 105.2, p < 0.001) with an R^2^ of 0.299 (i.e., 29.9% of variance in juvenile snowshoe weight is explained by hind foot length, and for each one mm increase in hind foot length we expect an average increase in weight of 9.52 grams). Pearson's *r* is equal to 0.55, indicating a moderate association between hind foot length and weight. However, diagnostic plots (not included) show a trend in variance, violating the assumption of homoscedasticity. Diagnostic plots also show that residuals are not normally distributed about the model and that there are outliers that may have too much leverage on the model. Due to these violations of assumptions, linear regression may not be describe the model well. 
+Simple linear regression was used to explore the relationship between juvenile snowshoe hare hind foot length (mm) and weight (g) across all grid sites, including both male and female juveniles. A significant regression model was found (p <0.001, R^2^ = `r round(juvenile_lm_glance$r.squared,2)`), with an average slope of $\beta$ = `r round (juvenile_lm_tidy$estimate[2],2)` g/mm^-1^ (i.e., 29.9% of variance in juvenile snowshoe weight is explained by hind foot length, and for each one mm increase in hind foot length we expect an average increase in weight of `r round(juvenile_lm_tidy$estimate[2], 2)` g). Pearson's *r* is equal to `r round(juvenile_cor_tidy$estimate,2)`, indicating a moderate association between hind foot length and weight. However, diagnostic plots (not included) show a trend in residual variance, violating the assumption of homoscedasticity. Diagnostic plots also show that residuals are not normally distributed about the model and that there are outliers that may have too much leverage on the model. Due to these violations of assumptions, linear regression may not describe the model well. 
+
+### Summary 
